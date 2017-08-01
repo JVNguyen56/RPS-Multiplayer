@@ -1,16 +1,14 @@
-//1. initialize firebase
-var config = {
-      apiKey: "AIzaSyDdvcM_CFSo-CHWLYNaOGWLjXfAcG4n4S8",
-    authDomain: "jn-firebase-amazingness.firebaseapp.com",
-    databaseURL: "https://jn-firebase-amazingness.firebaseio.com",
-    projectId: "jn-firebase-amazingness",
-    storageBucket: "jn-firebase-amazingness.appspot.com",
-    messagingSenderId: "480345885019"
-};
-
+$(document).ready(function(){
+  //firebase config and initialization//
+  var config = {
+    apiKey: "AIzaSyAaMZAJo1Ua3PC8RAbRV9yFluO0zUrbg18",
+    authDomain: "rock-paper-scissors-50d2e.firebaseapp.com",
+    databaseURL: "https://rock-paper-scissors-50d2e.firebaseio.com",
+    storageBucket: "rock-paper-scissors-50d2e.appspot.com",
+  };
   firebase.initializeApp(config);
-  
-var database = firebase.database();
+  //firebase references//
+  var database = firebase.database();
   var data = database.ref('data');
   var turn = data.child('turn');
   var playersRef = data.child('players');
@@ -22,32 +20,33 @@ var database = firebase.database();
   var changeDOM;
   var name;
   var gameObject = {
-		userId: "",
-		name: "",
-		pick: "",
-		wins: 0,
-		losses: 0,
-		ties: 0,
-		name2: "",
-		pick2: "",
-		wins2: 0,
-		losses2: 0,
-		ties2: 0,
-		turn: 0,
-};
+    userId: "",
+    name: "",
+    pick: "",
+    wins: 0,
+    losses: 0,
+    ties: 0,
+    name2: "",
+    pick2: "",
+    wins2: 0,
+    losses2: 0,
+    ties2: 0,
+    turn: 0,
+  };
 
   //sets the turn to 0 if a player disconnects//
   data.onDisconnect().update({turn: 0});
-
+  //resets the chat if a player disconnects//
+  data.child('chat').onDisconnect().set({});
   //keeps global variables in sync with firebase on changes to firebase//
-data.on('value', function(snapshot){
+  data.on('value', function(snapshot){
   //sets player1Exists and player2Exists to true or false depending on if they exist in the database//
   player1Exists = snapshot.child('players').child('1').exists();
   player2Exists = snapshot.child('players').child('2').exists();
-});
+  });
 
   //keeps the gameObject.turn variable in sync with firebase//
-turn.on('value', function(snapshot){
+  turn.on('value', function(snapshot){
     if(snapshot.val() == 1){
       gameObject.turn = 1;
       user1Choose();
@@ -60,28 +59,28 @@ turn.on('value', function(snapshot){
     } else if(snapshot.val() == 0){
       gameObject.turn = 0;
     }
-});
+  });
 
-//checks to see if changeDOM is true in firebase//
-data.child('changeDOM').on('value', function(snapshot){
+  //checks to see if changeDOM is true in firebase//
+  data.child('changeDOM').on('value', function(snapshot){
     if(snapshot.val() == true){
       changeDOM1();
     } else{
       return;
     }
-});
+  });
 
-//on click function for when a user submits name//
-$('#submit-button').on('click', function(){
+  //on click function for when a user submits name//
+  $('#submit-button').on('click', function(){
     name = $('#name').val();
     assignPlayer(name);
     $('#name').hide();
     $('#submit-button').hide();
     return false;
-});
+  });
 
-//function to assign player to player 1 or player 2//
-function assignPlayer(){
+  //function to assign player to player 1 or player 2//
+  function assignPlayer(){
     //if player 1 does NOT exist assign as player 1 and set player 1 as new firebase object//
     if(!player1Exists){
       gameObject.userId = 1;
@@ -146,10 +145,10 @@ function assignPlayer(){
     } else{
       alert('Sorry the game is full. Try again shortly.');
     }
-}
+  }
 
   //changes the DOM for player 1 WHEN player 2 joins the game//
-function changeDOM1(){
+  function changeDOM1(){
     if(gameObject.userId == '1'){
       player2Ref.once("value", function(snapshot) {
         gameObject.name2 = snapshot.val().name;
@@ -166,10 +165,10 @@ function changeDOM1(){
       });
       data.update({changeDOM: false});
     }
-}
+  }
 
-//function for player 1 to choose rock, paper, or scissors//
-function user1Choose(){
+  //function for player 1 to choose rock, paper, or scissors//
+  function user1Choose(){
     //double check this will only work for player 1 and it is player 1 turn//
     if(gameObject.userId == '1' && gameObject.turn == 1){
       $('#instructions').text('It is your turn. Choose rock, paper, or scissors by clicking on a picture below.');
@@ -185,10 +184,10 @@ function user1Choose(){
         $('#choice-section').hide();
       });
     }
-}
+  }
 
   //function for player 2 to choose rock, paper, or scissors//
-function user2Choose(){
+  function user2Choose(){
     //double check this will only work for player 2 and it is player 2 turn//
     if(gameObject.userId == '2' && gameObject.turn == 2){
       //change DOM for player 2//
@@ -203,10 +202,10 @@ function user2Choose(){
         $('#choice-section').hide();
       });
     }
-}
+  }
 
-//logic to check who the winner is//
-function checkWinner(){
+  //logic to check who the winner is//
+  function checkWinner(){
     //ensure it is turn 3//
     if(gameObject.turn == 3){
       // player 1 changes the turn to 0 so the function only runs once//
@@ -307,10 +306,10 @@ function checkWinner(){
     }
     //show the results for 3 seconds and then run the reset function//
     setTimeout(reset, 3000);
-}
+  }
 
-//reset function to change the DOM and change the turn to 1 so player 1 is prompted to choose again//
-function reset(){
+  //reset function to change the DOM and change the turn to 1 so player 1 is prompted to choose again//
+  function reset(){
     data.update({turn: 1});
     //changes the DOM for BOTH players//
     $('#choice1').text('');
@@ -327,7 +326,8 @@ function reset(){
         data.update({turn: 0});
       }
     });
-}
+  }
+
   //on click for the chat submit button that runs sendChat function//
   $('#send-button').on('click', function(){
     var chat = $('#chat').val();
@@ -337,7 +337,7 @@ function reset(){
   })
 
   //function to send chat to firebase, only works if two users are present//
-function sendChat(chat){
+  function sendChat(chat){
     if(player1Exists && player2Exists){
       if(gameObject.userId == '1'){
         data.child('chat').push({message: gameObject.name + ': ' + chat});
@@ -351,10 +351,10 @@ function sendChat(chat){
     } else{
       return;
     }
-}
+  }
 
   //updates the chat-window each time a new chat child is pushed to firebase//
-data.child('chat').on("value", function(snapshot) {
+  data.child('chat').on("value", function(snapshot) {
     $('#chat-window').empty();
     snapshot.forEach(function(childSnap) {
       if(gameObject.userId == '1' || gameObject.userId == '2'){
@@ -363,14 +363,15 @@ data.child('chat').on("value", function(snapshot) {
         $('#chat-window').append(p);
       }
     });
-});
+  });
 
   // if a player disconnects it notifies the remaining player and changes the DOM//
-data.child('players').on('child_removed', function(){
+  data.child('players').on('child_removed', function(){
     data.once('value', function(snapshot){
       if(player1Exists && !player2Exists){
         $('#instructions').text('Oops. It looks like player 2 has left the game. Waiting for a new player to join.');
-   
+        $('#chat-window').empty();
+        $('#chat-window').append('<p>Player 2 has disconnected.');
         $('#player2').text('');
         $('#wins2').text('');
         $('#losses2').text('');
@@ -378,7 +379,8 @@ data.child('players').on('child_removed', function(){
         $('#choice-section').hide();
       } else if (player2Exists && !player1Exists){
         $('#instructions').text('Oops. It looks like player 1 has left the game. Waiting for a new player to join.');
-       
+        $('#chat-window').empty();
+        $('#chat-window').append('<p>Player 1 has disconnected.');
         $('#player1').text('');
         $('#wins1').text('');
         $('#losses1').text('');
@@ -399,7 +401,8 @@ data.child('players').on('child_removed', function(){
             gameObject.losses = snapshot.val().losses;
             gameObject.ties = snapshot.val().ties;
             $('#instructions').text('You are playing against ' + gameObject.name + '. Waiting for their choice.');
-            
+            $('#chat-window').empty();
+            $('#chat-window').append('<p class="text-center">You are playing against ' + gameObject.name + '. You can chat here.</p>');
             $("#player1").text(gameObject.name);
             $("#wins1").text('Wins: ' + gameObject.wins);
             $("#losses1").text('Losses: ' + gameObject.losses);
@@ -408,5 +411,5 @@ data.child('players').on('child_removed', function(){
         }
       });
     });
-});
-
+  });
+}); //end of document ready
