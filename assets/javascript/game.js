@@ -1,12 +1,15 @@
 $(document).ready(function(){
   //firebase config and initialization//
   var config = {
-    apiKey: "AIzaSyAaMZAJo1Ua3PC8RAbRV9yFluO0zUrbg18",
-    authDomain: "rock-paper-scissors-50d2e.firebaseapp.com",
-    databaseURL: "https://rock-paper-scissors-50d2e.firebaseio.com",
-    storageBucket: "rock-paper-scissors-50d2e.appspot.com",
-  };
-  firebase.initializeApp(config);
+      apiKey: "AIzaSyDdvcM_CFSo-CHWLYNaOGWLjXfAcG4n4S8",
+    authDomain: "jn-firebase-amazingness.firebaseapp.com",
+    databaseURL: "https://jn-firebase-amazingness.firebaseio.com",
+    projectId: "jn-firebase-amazingness",
+    storageBucket: "jn-firebase-amazingness.appspot.com",
+    messagingSenderId: "480345885019"
+    };
+
+     firebase.initializeApp(config);
   //firebase references//
   var database = firebase.database();
   var data = database.ref('data');
